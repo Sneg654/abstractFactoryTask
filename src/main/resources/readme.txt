@@ -1,0 +1,1 @@
+Before starting the program, look in the config.properties file
