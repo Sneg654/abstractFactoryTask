@@ -15,8 +15,6 @@ import java.util.regex.Pattern;
  */
 public class Run {
     public static final String START_MESSAGE = "Please, select the mode(Enter 1-for DB mode, 2,name.txt -for file, where name.txt - name for file):";
-    public static final String MODE_DB = "1";
-    public static final String MODE_FILE = "2";
     public static final String REGEX_FORMAT_NAME = "[A-Z,a-z,-]{1,}_([A-Z,a-z,-]{1,}|\\.)";
     public static final String REGEX_FORMAT_AGE = "[0-9]{1,3}";
 
