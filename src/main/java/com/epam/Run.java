@@ -35,6 +35,8 @@ public class Run {
     public static final String READ_COMMAND="read";
     public static final String READ_NAME_COMMAND="readname";
     public static final String EXIT_COMMAND="exit";
+    public static final String INCORRECT_DELIMETER=" ";
+    public static final String REPLACE_INCORRECT_DELIMETER="";
 
     public static void main(String[] args) {
 
@@ -47,7 +49,7 @@ public class Run {
 
             Pattern namePattern = Pattern.compile(REGEX_FORMAT_NAME);
             Pattern agePattern = Pattern.compile(REGEX_FORMAT_AGE);
-            Object[] values = sc.nextLine().replaceAll(" ","").split(PersonAbstractAction.DELIMETER);
+            Object[] values = sc.nextLine().replaceAll(INCORRECT_DELIMETER,REPLACE_INCORRECT_DELIMETER).split(PersonAbstractAction.DELIMETER);
             String typeOfAction=String.valueOf(values[0]).trim();
             String nameFile=null;
             if(values.length>1){
@@ -60,7 +62,7 @@ public class Run {
                 System.out.println(RUN_COMMAND_MESSAGE);
 
                 while (sc.hasNextLine()) {
-                    values =sc.nextLine().replaceAll(" ","").split(PersonAbstractAction.DELIMETER);
+                    values =sc.nextLine().replaceAll(INCORRECT_DELIMETER,REPLACE_INCORRECT_DELIMETER).split(PersonAbstractAction.DELIMETER);
                     Person person = null;
                     if (values.length == 0) {
                         System.out.println(ARRAY_INDEX_OUT);
