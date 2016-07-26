@@ -42,13 +42,12 @@ public class Run {
         PersonAbstractAction action=null;
         System.out.println(START_MESSAGE);
      try{
-        while (sc.hasNext()) {
+        while (sc.hasNextLine()) {
             PersonAbstractFactory personAbstractFactory = new PersonAbstractFactory();
 
             Pattern namePattern = Pattern.compile(REGEX_FORMAT_NAME);
             Pattern agePattern = Pattern.compile(REGEX_FORMAT_AGE);
-            String currentValue;
-            Object[] values = sc.next().split(PersonAbstractAction.DELIMETER);
+            Object[] values = sc.nextLine().replaceAll(" ","").split(PersonAbstractAction.DELIMETER);
             String typeOfAction=String.valueOf(values[0]).trim();
             String nameFile=null;
             if(values.length>1){
@@ -60,9 +59,8 @@ public class Run {
             if (action != null) {
                 System.out.println(RUN_COMMAND_MESSAGE);
 
-                while (sc.hasNext()) {
-                    currentValue = sc.next();
-                    values = currentValue.split(PersonAbstractAction.DELIMETER);
+                while (sc.hasNextLine()) {
+                    values =sc.nextLine().replaceAll(" ","").split(PersonAbstractAction.DELIMETER);
                     Person person = null;
                     if (values.length == 0) {
                         System.out.println(ARRAY_INDEX_OUT);
@@ -79,7 +77,7 @@ public class Run {
                         }
                     } else if (values.length == 2) {
                         if (values[0].equals(READ_NAME_COMMAND)) {
-                            person = action.readPerson(values[1].toString().trim());
+                            person = action.readPerson(values[1].toString());
                             personInfo(person);
                         }
 
@@ -92,7 +90,7 @@ public class Run {
                             } else if (!ageMatcher.matches()) {
                                 System.out.println(INCORECT_AGE);
                             } else {
-                                action.writePerson(new Person(values[1].toString().trim(),
+                                action.writePerson(new Person(values[1].toString(),
                                         Integer.valueOf(values[2].toString())));
                             }
                         } else {
