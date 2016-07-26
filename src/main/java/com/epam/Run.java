@@ -1,9 +1,10 @@
 package com.epam;
 
 import com.epam.entity.Person;
+import com.epam.factory.PersonAbstractAction;
 import com.epam.factory.PersonAbstractFactory;
-import com.epam.factory.PersonDBFactory;
-import com.epam.factory.PersonFileFactory;
+import com.epam.factory.PersonDBAction;
+import com.epam.factory.PersonFileAction;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -16,14 +17,13 @@ public class Run {
     public static final String START_MESSAGE = "Please, select the mode(Enter 1-for DB mode, 2,name.txt -for file, where name.txt - name for file):";
     public static final String MODE_DB = "1";
     public static final String MODE_FILE = "2";
-    public static final String REGEX_FORMAT_FILE = "\\w{0,}.txt";
     public static final String REGEX_FORMAT_NAME = "[A-Z,a-z,-]{1,}_([A-Z,a-z,-]{1,}|\\.)";
     public static final String REGEX_FORMAT_AGE = "[0-9]{1,3}";
 
-    public static final String INCORECT_FILE_NAME = "Incorrect name for file, please repeat";
+
     public static final String INCORECT_NAME = "Incorrect name user, please repeat";
     public static final String INCORECT_AGE = "Incorrect age user, please repeat";
-    public static final String INCORECT_MODE = "Incorrect mode, please repeat";
+
     public static final String RUN_COMMAND_MESSAGE = "Please, write command (Exampe: 1) write,FirstName_LastName,21 -for add new Person;\n" +
             "2) read -for found some random person;\n" +
             "3) readname,FirstName_LastName -for search person with name FirstName_LastName;" +
@@ -41,67 +41,60 @@ public class Run {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
-        PersonAbstractFactory factory;
+        PersonAbstractAction action=null;
         System.out.println(START_MESSAGE);
      try{
         while (sc.hasNext()) {
-            Pattern pattern  = Pattern.compile(REGEX_FORMAT_FILE);
-            Pattern namePattern=Pattern.compile(REGEX_FORMAT_NAME);
-            Pattern agePattern=Pattern.compile(REGEX_FORMAT_AGE);
+            PersonAbstractFactory personAbstractFactory = new PersonAbstractFactory();
+
+            Pattern namePattern = Pattern.compile(REGEX_FORMAT_NAME);
+            Pattern agePattern = Pattern.compile(REGEX_FORMAT_AGE);
             String currentValue;
-            Object[] values = sc.next().split(PersonAbstractFactory.DELIMETER);
-
-            if (values[0].equals(MODE_DB)) {
-
-                factory = new PersonDBFactory();
-
-            } else if (values[0].equals(MODE_FILE)) {
-                Matcher matcher = pattern.matcher(values[1].toString());
-                if (matcher.matches()) {
-                    factory = new PersonFileFactory(values[1].toString());
-                } else {
-                    System.out.println(INCORECT_FILE_NAME);
-                    continue;
-                }
-            } else {
-                System.out.println(INCORECT_MODE);
-                continue;
+            Object[] values = sc.next().split(PersonAbstractAction.DELIMETER);
+            String typeOfAction=String.valueOf(values[0]).trim();
+            String nameFile=null;
+            if(values.length>1){
+                nameFile=String.valueOf(values[1]).trim();
             }
+            action = personAbstractFactory.getPersonAction(typeOfAction,
+                        nameFile);
 
-            System.out.println(RUN_COMMAND_MESSAGE);
+            if (action != null) {
+                System.out.println(RUN_COMMAND_MESSAGE);
 
-            while (sc.hasNext()) {
-                currentValue = sc.next();
-                values = currentValue.split(PersonAbstractFactory.DELIMETER);
-                Person person = null;
-                if (values.length == 0) {
-                    System.out.println(ARRAY_INDEX_OUT);
-                } else if (values.length == 1) {
-                    if (values[0].equals(READ_COMMAND)) {
-                        person = factory.readPerson();
-                        personInfo(person);
-                    } else if (values[0].equals(EXIT_COMMAND)) {
-                        System.out.println(START_MESSAGE);
-                        break;
-                    } else {
-                        System.out.println(INCORRECT_COMMAND);
-                        continue;
-                    }
-                } else if (values.length == 2) {
-                    if (values[0].equals(READ_NAME_COMMAND)) {
-                        person = factory.readPerson(values[1].toString().trim());
-                        personInfo(person);}
+                while (sc.hasNext()) {
+                    currentValue = sc.next();
+                    values = currentValue.split(PersonAbstractAction.DELIMETER);
+                    Person person = null;
+                    if (values.length == 0) {
+                        System.out.println(ARRAY_INDEX_OUT);
+                    } else if (values.length == 1) {
+                        if (values[0].equals(READ_COMMAND)) {
+                            person = action.readPerson();
+                            personInfo(person);
+                        } else if (values[0].equals(EXIT_COMMAND)) {
+                            System.out.println(START_MESSAGE);
+                            break;
+                        } else {
+                            System.out.println(INCORRECT_COMMAND);
+                            continue;
+                        }
+                    } else if (values.length == 2) {
+                        if (values[0].equals(READ_NAME_COMMAND)) {
+                            person = action.readPerson(values[1].toString().trim());
+                            personInfo(person);
+                        }
 
                     } else if (values.length == 3) {
                         if (values[0].equals(WRITE_COMMAND)) {
                             Matcher nameMatcher = namePattern.matcher(values[1].toString());
                             Matcher ageMatcher = agePattern.matcher(values[2].toString());
-                            if(!nameMatcher.matches()){
+                            if (!nameMatcher.matches()) {
                                 System.out.println(INCORECT_NAME);
-                            }else if(!ageMatcher.matches()){
+                            } else if (!ageMatcher.matches()) {
                                 System.out.println(INCORECT_AGE);
-                            }else {
-                                factory.writePerson(new Person(values[1].toString().trim(),
+                            } else {
+                                action.writePerson(new Person(values[1].toString().trim(),
                                         Integer.valueOf(values[2].toString())));
                             }
                         } else {
@@ -114,7 +107,7 @@ public class Run {
                 }
 
             }
-
+        }
     }catch (ArrayIndexOutOfBoundsException e){
          System.out.println(ARRAY_INDEX_OUT);
      }

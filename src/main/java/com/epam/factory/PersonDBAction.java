@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 /**
  * Created by Sergey_Stefoglo on 7/21/2016.
  */
-public class PersonDBFactory implements PersonAbstractFactory {
+public class PersonDBAction implements PersonAbstractAction {
 
     private static final String INSERT_USER = "INSERT INTO factory_user VALUES (?,?)";
     private static final String RANDOM_USER = "select user_name, age from factory_user where rownum=1";
@@ -19,7 +19,8 @@ public class PersonDBFactory implements PersonAbstractFactory {
     public static final String USER_AGE_DB = "AGE";
     public final ConnectionPool pool=ConnectionPool.getInstance();
 
-
+    PersonDBAction() {
+    }
 
     public void writePerson(Person person) {
 

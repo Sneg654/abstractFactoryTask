@@ -9,11 +9,12 @@ import java.util.ResourceBundle;
 /**
  * Created by Sergey_Stefoglo on 7/21/2016.
  */
-public class PersonFileFactory implements PersonAbstractFactory {
+public class PersonFileAction implements PersonAbstractAction {
     private String filePath;
     private ResourceBundle labels = ResourceBundle.getBundle("config");
     public final static String UTF="UTF-8";
-    public PersonFileFactory(String filePath) {
+
+    PersonFileAction(String filePath) {
         this.filePath = labels.getString("pathForFolder") + filePath;
         createFile(filePath);
 
